@@ -38,4 +38,34 @@ This output shows that floci is not using stray vlolume.
 
 End of part A
 
+### Building the IAM Foundation
+
+**4 IAM building blocks**
+
+USER: identity that represents a person or service that interacts with AWS resources.
+GROUP: group of users that share the same permissions.
+ROLE: identity that can be assumed by anyone who needs it.
+POLICY: A JSON object that says ALLOW or DENY access to AWS resources.
+
+basic rules to remember:
+- Default deny: all requests are denied by default, unless explicitly allowed.
+- Explicit deny always wins: if a request is explicitly denied, it will be denied even if there is an allow policy that would otherwise allow it.
+
+![alt text](../../screenshots/11.png)
+My account exist, but there is no user created yet. 
+
+
+
+Run aws iam list-roles --output table. Floci may pre-create some service-linked roles. Are the results the same in text format? Which one would you use inside a script, and why?
+- I would use the table format because when there is no user created, text format doesn't show any output. The table format shows the table with the column names and the values, which is more readable.
+
+**Create the IAM groups**
+
+![alt text](../../screenshots/12.png)
+![alt text](../../screenshots/13.png)
+
+created an empty IAM group. A group has no permissions and no members.
+
+![alt text](../../screenshots/14.png)
+It shows IAM group created
 
