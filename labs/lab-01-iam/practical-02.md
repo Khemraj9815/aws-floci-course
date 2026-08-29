@@ -71,13 +71,85 @@ Every subnets in a VPC can talk to each other by default. But to allow instances
 
 We need to tell the public subnet to use the public route table so that it can access the internet.
 
+A subnet has exactly one route table associated with, if it is not associated with one, it uses the VPC's main route table.
+
+![alt text](../../screenshots/p2-11.png)
+
+**Create the private route table and associate the private subnet**
+
+The private route table is create and associated with the private subnet. The private route table does not have a default route to the internet gateway, so instances in the private subnet cannot communicate with the internet.
+
+![alt text](../../screenshots/p2-12.png)
+![alt text](../../screenshots/p2-13.png)
+
+There is new new public subnet created
+![alt text](../../screenshots/p2-14.png)
+
+
+**Prove the two subnets are actually different**
+
+Checking the route tables for both subnets to prove that they are actually different. The public subnet has a default route to the internet gateway, while the private subnet does not.
+![alt text](../../screenshots/p2-15.png)
+
+**Create the application security group**
+
+this secutity is attached to the web server and allows HTTP traffic from anywhere on the internet.
+
+![alt text](../../screenshots/p2-16.png)
+
+**Exercise**
+
+Allow TCP 443 from anywhere on the internet. 
+![alt text](../../screenshots/p2-17.png)
+
+**Create the database security group, sourced from the application group**
+
+The database security group should only allow traffic from the application security group, not from the public subnet directly. This way, even if the IP addresses change, the security group rules will still apply correctly.
+
+![alt text](../../screenshots/p2-18.png)
+
+**Read the groups back, and understand what stateful means**
+
+Security groups are stateful, meaning if you allow an incoming request from a specific IP, the response is automatically allowed, regardless of outbound rules.
+
+![alt text](../../screenshots/p2-18.png)
+
+**Explore the default network ACL, then create a private one**
+
+Private subnet contains sensitive data, to protect data, we use a NACL on the subnet as extra layer of security.
+![alt text](../../screenshots/p2-19.png)
+
+NACL deny by fault all inbound and outbound traffic. need to remember few rules. let's add rules.
+
+![alt text](../../screenshots/p2-20.png)
+- added inbound rule to allow access to postgreSQL anywhere from inside VPC.
+- return traffic for connections this subnet opened outbound.
+- replies to the application tier
+- HTTPS out
+
+**Associate the private NACL with the private subnet**
+
+NACL is already associated with the private subnet. So we need to disassociate it first and then associate the new NACL with the private subnet.
+
+![alt text](../../screenshots/p2-21.png)
 
 
 
+**Give the private subnet outbound internet access with a NAT gateway**
+
+The NAT gateway allows the private subnet to access the internet for updates while keeping it secure from incoming traffic. 
+
+![alt text](../../screenshots/p2-22.png)
+
+create the NAT gateway in the public subnet
+![alt text](../../screenshots/p2-23.png)
 
 
+**Point the private route table at the NAT gateway**
 
+![alt text](../../screenshots/p2-24.png)
 
+**Create the S3 gateway endpoint**
 
 
 
