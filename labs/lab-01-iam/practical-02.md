@@ -151,6 +151,28 @@ create the NAT gateway in the public subnet
 
 **Create the S3 gateway endpoint**
 
+If instances in the private subnet have to reach S3 by going out through the NAT gateway and back in over the public internet, the university is paying NAT charges to move transcripts between two AWS services in the same region and the traffic leaves the AWS network to do it.A gateway endpoint fixes that with a route, not a tunnel. You add an entry to a route table whose destination is S3's prefix list and whose target is the endpoint. Traffic for S3 then never touches the internet gateway or the NAT gateway at all. write it in simple word.
+
+- If instances in the private subnet need to access S3, they can do so without going through the NAT gateway and incurring charges. By using a gateway endpoint, a direct route is created to S3, keeping the traffic within the AWS network.
+
+![alt text](../../screenshots/p2-25.png)
+
+
+**Audit your tags**
+
+![alt text](../../screenshots/p2-26.png)
+
+
+![alt text](../../screenshots/p2-27.png)
+with reference to step 9, this is list of subnet in VPC.
+
+**Prove the network survives a restart**
+
+The shell variables are safe even if the container is stopped. But VPC_ID is found again using a tag, it is not just reused. This shows it really checks the API for the resource, instead of just using a remembered string.
+
+
+
+
 
 
 

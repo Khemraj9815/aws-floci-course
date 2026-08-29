@@ -1,0 +1,43 @@
+{
+    "SecurityGroupRules": [
+        {
+            "SecurityGroupRuleId": "sgr-e331c6946b63a628c",
+            "GroupId": "sg-bd9aea8f9d4565315",
+            "GroupOwnerId": "000000000000",
+            "IsEgress": false,
+            "IpProtocol": "tcp",
+            "FromPort": 3306,
+            "ToPort": 3306,
+            "Tags": []
+        },
+        {
+            "SecurityGroupRuleId": "sgr-2e412a5a5b8ffb1a0",
+            "GroupId": "sg-bd9aea8f9d4565315",
+            "GroupOwnerId": "000000000000",
+            "IsEgress": false,
+            "IpProtocol": "tcp",
+            "FromPort": 5432,
+            "ToPort": 5432,
+            "Tags": []
+        },
+        {
+            "SecurityGroupRuleId": "sgr-fab085886548d1479",
+            "GroupId": "sg-bd9aea8f9d4565315",
+            "GroupOwnerId": "000000000000",
+            "IsEgress": false,
+            "IpProtocol": "tcp",
+            "FromPort": 3306,
+            "ToPort": 3306,
+            "Tags": []
+        },
+        {
+            "SecurityGroupRuleId": "sgr-f142d8c48e980d7d8",
+            "GroupId": "sg-bd9aea8f9d4565315",
+            "GroupOwnerId": "000000000000",
+            "IsEgress": true,
+            "IpProtocol": "-1",
+            "CidrIpv4": "0.0.0.0/0",
+            "Tags": []
+        }
+    ]
+}
