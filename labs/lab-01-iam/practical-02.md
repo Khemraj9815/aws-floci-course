@@ -171,13 +171,6 @@ with reference to step 9, this is list of subnet in VPC.
 The shell variables are safe even if the container is stopped. But VPC_ID is found again using a tag, it is not just reused. This shows it really checks the API for the resource, instead of just using a remembered string.
 
 
-
-
-
-
-
-
-
 ## Building VPC and Launching a Web Server
 
 **Task 1: Create Your VPC**
