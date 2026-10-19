@@ -1,0 +1,4 @@
+export AMI_ID=ami-0abcdef1234567890
+export USMS_PRIVATE_SUBNET_A=
+export USMS_DB_SG=
+export WEB_INSTANCE_ID=i-f08f8c3eb30e3b279
