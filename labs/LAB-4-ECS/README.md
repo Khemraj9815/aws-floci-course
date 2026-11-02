@@ -148,19 +148,19 @@ Service is ACTIVE, desired 2, two private subnets, public IP DISABLED. (Checkpoi
 
 Final output showing `PASS=38 FAIL=0` (or the benign failures explained in Section 7).
 
-> *(Insert screenshot here)*
+![alt text](assets/15.png)
 
-### 6.2 AWS Management Console Verification
+<!-- ### 6.2 AWS Management Console Verification
 
-**Screenshot 12 – ECS cluster** – Shows `usms-ecs-cluster` is active.
-
-> *(Insert screenshot here)*
-
-**Screenshot 13 – ECS service and tasks** – Shows `usms-enrolment-svc` with desired count 2.
+**ECS cluster** – Shows `usms-ecs-cluster` is active.
 
 > *(Insert screenshot here)*
 
-**Screenshot 14 – Task definition** – Shows `usms-enrolment:1` with CPU, memory and roles.
+**ECS service and tasks** – Shows `usms-enrolment-svc` with desired count 2.
+
+> *(Insert screenshot here)*
+
+**Task definition** – Shows `usms-enrolment:1` with CPU, memory and roles.
 
 > *(Insert screenshot here)*
 
@@ -170,22 +170,13 @@ Final output showing `PASS=38 FAIL=0` (or the benign failures explained in Secti
 
 **Screenshot 16 – CloudWatch log group** – Shows `/usms/ecs/enrolment` with 7-day retention.
 
-> *(Insert screenshot here)*
+> *(Insert screenshot here)* -->
 
-## 7. Analysis and Discussion
+## 7. Analysis
 
-**What was achieved.** The USMS enrolment service was set up on ECS with Fargate. I created a cluster, a log group, two IAM roles, a security group, a task definition and a service with 2 tasks across two private subnets. All names and ARNs were saved in `configs/lab-04.env` and committed to Git.
+The USMS enrolment service was set up on ECS with Fargate. I created a cluster, a log group, two IAM roles, a security group, a task definition and a service with 2 tasks across two private subnets.
 
-**Did the results match the expected outcome?** Yes. The cluster was ACTIVE, the task definition was `usms-enrolment:1` with two different role ARNs, and the service showed desired count 2, two subnets and public IP DISABLED. The verify script gave `PASS=38 FAIL=0` *(edit this if your result was different)*.
-
-**Errors and how they were solved.** *(Edit this part to match what really happened to you.)*
-
-| Problem | Cause | Fix |
-| --- | --- | --- |
-| `runningCount` stayed at 0 | Some Floci builds do not really start Fargate containers | Checked that `desiredCount` was correct and recorded it as a Floci limitation |
-| Task definition had a `$` left inside | A shell variable was empty when the file was written | Re-sourced the env files and wrote the file again |
-| `ExpiredToken` errors | Assumed-role credentials were still set after 1 hour | Ran `unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN` |
-| `--network-configuration` syntax error | Spaces or quotes inside the shorthand | Rewrote it with no spaces and no quotes around IDs |
+The cluster was ACTIVE, the task definition was `usms-enrolment:1` with two different role ARNs, and the service showed desired count 2, two subnets and public IP DISABLED. The verify script gave `PASS=36 FAIL=2`
 
 **Observations.**
 
@@ -218,37 +209,3 @@ Final output showing `PASS=38 FAIL=0` (or the benign failures explained in Secti
 The objectives of this practical were achieved. The USMS enrolment service now runs on Amazon ECS with Fargate as a service with 2 tasks in two private subnets. It uses a least-privilege execution role, a separate task role that reuses Lab 1's policy, and a security group that only accepts traffic from the web tier. Everything was recorded in `configs/lab-04.env` and checked with a verification script.
 
 From this lab I learned the main ECS concepts, how IAM roles work for containers, and how private subnets use a NAT gateway to pull images. I improved my skills in the AWS CLI, writing JSON documents, JMESPath queries and Bash scripts. ECS is an important service because it makes applications reliable and easy to deploy, and it prepares the system for the load balancer and auto scaling in the next labs.
-
-## 10. Appendix
-
-**Files created in this lab**
-
-| File | Purpose |
-| --- | --- |
-| `policies/trust-ecs-tasks.json` | Trust policy for both ECS roles |
-| `policies/usms-ecs-task-execution-policy.json` | Least-privilege policy for the execution role |
-| `policies/usms-enrolment-sg-ingress.json` | Inbound rule: port 80 from `usms-app-sg` |
-| `templates/lab-04-taskdef.json` | Task definition used by `register-task-definition` |
-| `configs/lab-04.env` | All names and ARNs for Lab 05 and Lab 06 (17 exports) |
-| `scripts/utilities/verify-lab-04.sh` | Checks every Lab 04 resource |
-| `scripts/cleanup/lab-04-cleanup.sh` | End-of-course cleanup (not run) |
-| `notes/lab-04-notes.md` | Support path and review question answers |
-
-**Repository link:** *(paste your GitHub repository link here)*
-
-**Lab reference:** [Lab 04 – Amazon ECS](https://norbutlepcha25.github.io/dso303/Lab/Lab-04-ECS.html)
-
-### Submission Checklist
-
-- [ ] Student information completed
-- [x] Objectives stated
-- [x] Introduction provided
-- [x] Real-world use case described
-- [ ] Architecture diagram inserted
-- [x] Implementation documented
-- [ ] CLI screenshots inserted
-- [ ] Console screenshots inserted
-- [x] Analysis completed
-- [x] Reflection completed
-- [x] Conclusion written
-
