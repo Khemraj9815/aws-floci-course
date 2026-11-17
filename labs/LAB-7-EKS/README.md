@@ -200,6 +200,11 @@ A Secret was created and decoded with `base64 -d` to show that it is encoded, no
 ![alt text](assets/28.png)
 
 
+**Exercise 1 - Basic: a fourth microservice**
+
+
+
+
 ### 6.2 AWS Management Console Verification
 
 This practical was performed on Floci, a local emulator with no AWS Management Console. AWS-side objects were verified with read-back CLI commands (`describe-cluster`, `describe-nodegroup`, `get-role`, `list-attached-role-policies`, `describe-security-groups`), and Kubernetes objects with `kubectl get`, `describe` and in-cluster requests, as shown in Section 6.1.
@@ -208,9 +213,6 @@ This practical was performed on Floci, a local emulator with no AWS Management C
 
 Unlike Labs 05 and 06, the Kubernetes half of this lab is real: Floci starts a genuine k3s cluster, so Deployments, Services, DNS discovery, rollouts and failure modes all behaved exactly as they would on EKS. The AWS half (IAM policies, node group sizing, instance types and the VPC CNI) was recorded but not enforced. The observed results matched the expected outcomes.
 
-### Errors encountered and how they were resolved
-
-> ✏️ Keep the items you actually hit, delete the rest, and add any others with the exact error text.
 
 **1. Gateway in `CrashLoopBackOff` with `host not found in upstream`**
 nginx resolves `proxy_pass` hostnames once at start-up. If the gateway starts before the enrolment and results Services exist, nginx exits and the pod restarts repeatedly. Applying the manifests in numeric order (`20-`, `30-`, then `40-`) avoids it; when it happened, `kubectl rollout restart deployment/usms-gateway` after the Services existed fixed it.
@@ -222,34 +224,7 @@ If the exec-plugin in the generated kubeconfig is unsupported, `kubectl` cannot 
 A control-plane node carries a `NoSchedule` taint. If no worker nodes registered, pods cannot be scheduled. The correct fix is the node group (Step 10); the local-only workaround of removing the taint must be recorded, because it would be unsafe on a real cluster.
 
 **4. Configuration change did not reach the pods (Step 18)**
-After editing `usms-app-config`, the enrolment pods still reported `1.0.0`. ConfigMaps are read when a container starts, so changing one does not restart pods. Annotating the Deployment's own metadata did not change the pod template either, so `kubectl rollout restart` was used, which writes a timestamp into the template and creates a new ReplicaSet.
-
-**5. Rollback did not revert the version (Step 18)**
-After `rollout undo`, the response still said `1.1.0`, because the rollback restored the previous pod template while the ConfigMap stayed at `1.1.0`. Configuration that lives outside the pod template is not versioned with it. The ConfigMap was restored by hand to `1.0.0` and the Deployment restarted.
-
-**6. `_lb_ports_` tag** ✏️ *(only if applicable)*
-If `cluster.tags._lb_ports_` read `None` in Step 9, it was added with `aws eks tag-resource` and re-read. ✏️ *State the outcome.*
-
-### Did the results match the expected outcome?
-
-> ✏️ Adjust each row to match what you observed.
-
-| Area                                                  | Result                                         |
-| ----------------------------------------------------- | ---------------------------------------------- |
-| IAM roles, trust policies, stand-in policies          | Original feature demonstrated (stored, not enforced) |
-| Cluster security group in Lab 02's VPC                | Original feature demonstrated                  |
-| `eks create-cluster` / `describe-cluster`             | Original feature demonstrated (Path A)         |
-| Managed node group                                    | Configuration only (nodes are local containers; `t3.small` not provisioned) |
-| Deployments, ReplicaSets, Services, ConfigMaps        | Original feature demonstrated                  |
-| Cluster DNS and load spreading                        | Original feature demonstrated                  |
-| Self-healing after pod deletion                       | Original feature demonstrated                  |
-| Secret behaviour (base64, not encryption)             | Original feature demonstrated                  |
-| Rolling update and rollback                           | Original feature demonstrated                  |
-| Three failure modes                                   | Original feature demonstrated                  |
-| VPC CNI (pods with VPC IPs)                           | Not demonstrated (k3s cluster network)         |
-| IRSA                                                  | ✏️ Configuration only / conceptual (no OIDC issuer) |
-| KMS encryption of Secrets, access entries             | Conceptual / real AWS only                     |
-| Persistence across restart                            | ✏️ Proven / failed                             |
+After editing `usms-app-config`, the enrolment pods still reported `1.0.0`. ConfigMaps are read when a container starts, so changing one does not restart pods. Annotating the Deployment's own metadata did not change the pod template either, so `kubectl rollout restart` was used, which writes a timestamp into the template and creates a new ReplicaSet.    
 
 ### Observations
 
@@ -262,22 +237,14 @@ If `cluster.tags._lb_ports_` read `None` in Step 9, it was added with `aws eks t
 
 ## 8. Reflection
 
-**1. What did you learn about this AWS service?**
+**1. What did I learn about this AWS service?**
 I learned how EKS splits responsibility: AWS runs the control plane, while I run the data plane and its node role. I learned to express an application as Deployments, Services, ConfigMaps and Secrets, and that Kubernetes keeps the declared state by replacing pods automatically. I also learned that a Secret is only base64-encoded, and that IRSA is the correct way to give individual pods AWS permissions.
 
-**2. What challenges did you encounter?**
+**2. Challenges encountered**
 The main challenge was the number of moving parts across two tools: IAM roles that must trust different principals, heredocs that must be quoted for manifests but unquoted for request bodies, and `kubectl` contexts. The most instructive moment was the rollback that did not revert the version, which showed that configuration outside the pod template is not part of a Deployment's history.
 
 **3. How would you apply this service in a real-world cloud environment?**
 I would run the same manifests on EKS with nodes in private subnets across at least two AZs, expose the gateway through the AWS Load Balancer Controller, enable KMS envelope encryption for Secrets, use IRSA or EKS Pod Identity instead of node-role permissions, add PodDisruptionBudgets and topology spread constraints, and deploy through a GitOps pipeline so configuration is versioned with the workload.
-
-**4. What additional concepts or features would you like to explore?**
-- Horizontal Pod Autoscaler and node autoscaling (Lab 08)
-- Ingress and the AWS Load Balancer Controller
-- NetworkPolicies for isolation between namespaces
-- Helm and Kustomize for packaging manifests
-- EKS Pod Identity as the successor to IRSA
-- Observability with Container Insights and Prometheus
 
 ## 9. Conclusion
 

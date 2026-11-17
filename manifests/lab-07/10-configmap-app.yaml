@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: usms-app-config
-  namespace: usms-eks
+  namespace: usms
   labels:
     project: usms
 data:
