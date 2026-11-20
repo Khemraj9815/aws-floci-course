@@ -30,3 +30,7 @@ Thumbs.db
 *.swp
 .vscode/
 .idea/
+
+# local backup files
+*.bak
+*.bak-*
